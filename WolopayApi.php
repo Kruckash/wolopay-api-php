@@ -3,7 +3,7 @@
 /**
  * This file is part of wolopay.com (c)
  *
- * Class to help customers to use Wolopay API
+ * Class to help merchants to use Wolopay API
  */
 class WolopayApi
 {
@@ -26,7 +26,7 @@ class WolopayApi
      * @param $clientId
      * @param $secret
      * @param bool $sandbox
-     * @param bool $debug var_dump if fail
+     * @param bool $debug var_dump if fail show response from server
      */
     function __construct($clientId, $secret, $sandbox=false, $debug=false)
     {
@@ -178,7 +178,7 @@ class WolopayApi
     }
 
     /**
-     * This function is used to know how long does the gamer takes to do a first purchase
+     * This function is used to know how long does the gamer takes to do a first purchase, OPTIONAL
      *
      * @param $gamerId
      * @param array $optionalParameters
@@ -208,6 +208,8 @@ class WolopayApi
     }
 
     /**
+     * Make a purchase using a promotional code and a user
+     *
      * @param $promoCode
      * @param $gamerId
      * @param array $extraOptions
@@ -238,7 +240,7 @@ class WolopayApi
     }
 
     /**
-     * Create a promotional code
+     * Get Articles by country
      *
      * @param $countryISO String ISO 3166 2 digits
      * @param array $extraOptions
@@ -282,15 +284,13 @@ class WolopayApi
         $result = curl_getinfo($ch);
         curl_close ($ch);
 
-//        echo $resultJson."<br>\n<br>\n";
-
         if ($result['http_code'] < 200 || $result['http_code'] >= 300) {
 
-            if ($this->debug)
-                echo $resultJson."<br>\n<br>\n";
+            if ($this->debug){
 
-            if ($this->debug)
+                echo $resultJson."<br>\n<br>\n";
                 var_dump($result);
+            }
 
             return false;
         }
