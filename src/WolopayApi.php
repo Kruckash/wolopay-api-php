@@ -1,5 +1,7 @@
 <?php
 
+namespace Wolopay;
+
 /**
  * This file is part of wolopay.com (c)
  *

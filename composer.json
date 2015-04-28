@@ -1,0 +1,23 @@
+{
+    "name": "wolopay/wolopay-api-php",
+    "type": "library",
+    "description":"Wolopay SDK for PHP.",
+    "keywords": ["sdk", "wolopay", "api", "payment", "games"],
+    "homepage": "http://wolopay.github.io",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Wolopay Developers",
+            "email": "mgarcia@wolopay.com"
+        }
+    ],
+    "require": {
+        "php": ">=5.2.0",
+        "ext-curl": "*"
+    },
+    "autoload": {
+        "psr-0": {
+            "Wolopay": "src"
+        }
+    }
+}
