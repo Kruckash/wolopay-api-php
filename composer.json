@@ -13,11 +13,12 @@
     ],
     "require": {
         "php": ">=5.2.0",
-        "ext-curl": "*"
+        "ext-curl": "*",
+        "wolopay/wolopay-api-php": "~1.0"
     },
     "autoload": {
-        "psr-0": {
-            "Wolopay": "src"
+        "psr-4": {
+            "Wolopay\\": "src"
         }
     }
 }
