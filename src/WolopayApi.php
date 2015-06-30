@@ -254,6 +254,27 @@ class WolopayApi
     }
 
     /**
+     * Make a purchase with your virtual currency (only available in some apps)
+     *
+     * @param $gamerId
+     * @param $gamerLevel
+     * @param $articleId
+     * @param $countryISO String ISO 3166 2 digits
+     * @param array $extraOptions
+     *
+     * @return stdclass
+     */
+    public function makePurchaseWithVirtualCurrencies($gamerId, $gamerLevel, $articleId, $countryISO, $extraOptions = array())
+    {
+        $extraOptions['gamer_id'] = $gamerId;
+        $extraOptions['article_id'] = $articleId;
+        $extraOptions['country'] = $countryISO;
+        $extraOptions['gamer_level'] = $gamerLevel;
+
+        return $this->makeRequest('/virtual_currency/exchange.json', 'POST', $extraOptions);
+    }
+
+    /**
      * @param $url
      * @param string $method
      * @param array $values
