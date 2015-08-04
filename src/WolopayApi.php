@@ -21,6 +21,9 @@ class WolopayApi
     /** @var Boolean */
     private $debug;
 
+    /** @var String */
+    private $language;
+
     const PRODUCTION_URL = 'https://wolopay.com/api/v1';
     const SANDBOX_URL    = 'https://sandbox.wolopay.com/api/v1';
 
@@ -29,17 +32,27 @@ class WolopayApi
      * @param $secret
      * @param bool $sandbox
      * @param bool $debug var_dump if fail show response from server
+     * @param string $language
      */
-    function __construct($clientId, $secret, $sandbox=false, $debug=false)
+    function __construct($clientId, $secret, $sandbox=false, $debug=false, $language='en')
     {
         $this->clientId = $clientId;
         $this->secret   = $secret;
         $this->debug    = $debug;
+        $this->language = $language;
 
         if ($sandbox)
             $this->environmentUrl = static::SANDBOX_URL;
         else
             $this->environmentUrl = static::PRODUCTION_URL;
+    }
+
+    /**
+     * @param string $language languages available (look your admin (configurator -> wizard ) and check your languages)
+     */
+    public function setLanguage($language)
+    {
+        $this->language = $language;
     }
 
     /**
@@ -184,7 +197,7 @@ class WolopayApi
      *
      * @param $gamerId
      * @param array $optionalParameters
-     * @return stdclass
+     * @return \stdclass
      */
     public function createGamer($gamerId, $optionalParameters = array())
     {
@@ -199,7 +212,7 @@ class WolopayApi
      * @param $promo_code
      * @param $articleId
      * @param array $extraOptions
-     * @return stdclass
+     * @return \stdclass
      */
     public function createPromotionalCode($promo_code, $articleId, $extraOptions = array())
     {
@@ -215,7 +228,7 @@ class WolopayApi
      * @param $promoCode
      * @param $gamerId
      * @param array $extraOptions
-     * @return stdclass
+     * @return \stdclass
      */
     public function usePromotionalCodeByGamerId($promoCode, $gamerId, $extraOptions = array())
     {
@@ -231,7 +244,7 @@ class WolopayApi
      * @param $promo_code
      * @param $articleId
      * @param array $extraOptions
-     * @return stdclass
+     * @return \stdclass
      */
     public function updatePromotionalCode($promo_code, $articleId, $extraOptions = array())
     {
@@ -246,7 +259,7 @@ class WolopayApi
      *
      * @param $countryISO String ISO 3166 2 digits
      * @param array $extraOptions
-     * @return stdclass
+     * @return \stdclass
      */
     public function getArticlesByCountry($countryISO, $extraOptions = array())
     {
@@ -262,13 +275,13 @@ class WolopayApi
      * @param $countryISO String ISO 3166 2 digits
      * @param array $extraOptions
      *
-     * @return stdclass
+     * @return \stdclass
      */
     public function makePurchaseWithVirtualCurrencies($gamerId, $gamerLevel, $articleId, $countryISO, $extraOptions = array())
     {
-        $extraOptions['gamer_id'] = $gamerId;
-        $extraOptions['article_id'] = $articleId;
-        $extraOptions['country'] = $countryISO;
+        $extraOptions['gamer_id']    = $gamerId;
+        $extraOptions['article_id']  = $articleId;
+        $extraOptions['country']     = $countryISO;
         $extraOptions['gamer_level'] = $gamerLevel;
 
         return $this->makeRequest('/virtual_currency/exchange.json', 'POST', $extraOptions);
@@ -278,7 +291,7 @@ class WolopayApi
      * @param $url
      * @param string $method
      * @param array $values
-     * @return stdclass
+     * @return \stdclass
      */
     private function makeRequest($url, $method='GET', array $values = array())
     {
@@ -300,7 +313,7 @@ class WolopayApi
         curl_setopt($ch, CURLOPT_URL, $url);
         curl_setopt($ch, CURLOPT_CUSTOMREQUEST, $method);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_HTTPHEADER, array('X-WSSE: '.$this->generateHeaderWSSE()));
+        curl_setopt($ch, CURLOPT_HTTPHEADER, array('X-WSSE: '.$this->generateHeaderWSSE(), 'Accept-Language: '.$this->language));
 
         $resultJson = curl_exec ($ch);
 
@@ -311,8 +324,7 @@ class WolopayApi
 
             if ($this->debug){
 
-                echo $resultJson."<br>\n<br>\n";
-                var_dump($result);
+                echo "HTTP_CODE: ".$result['http_code']."\n<br>".$resultJson."<br>\n<br>\n";
             }
 
             return false;
