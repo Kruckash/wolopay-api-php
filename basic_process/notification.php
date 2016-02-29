@@ -29,13 +29,21 @@ if (!$wolopayApi->isAValidRequest()){
     throw new \Exception("invalid request");
 }
 
-if ($_GET['test'])
-{
-    echo "Your logic when it was a test";
-    exit;
+// IMPORTANT: Last verifications is with your system. you will need to ensure that the $_POST['notificationId']
+// wasn't used and success
+
+if ($_POST['event'] === 'payment.completed'){
+
+    if ($_POST['test']){
+        echo "Your logic when it was a test";
+    }
+
+}elseif ($_POST['event'] === 'payment.cancelled'){
+
+    if ($_POST['test']){
+        echo "Your logic when it was a test";
+    }
 }
 
-// IMPORTANT: Last verifications is with your system. you will need to ensure that the $_GET['notificationId'] wasn't used
-// and success
 
 

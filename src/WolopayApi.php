@@ -293,7 +293,7 @@ class WolopayApi
      * @param array $values
      * @return \stdclass
      */
-    private function makeRequest($url, $method='GET', array $values = array())
+    protected function makeRequest($url, $method='GET', array $values = array())
     {
         $url = $this->environmentUrl . $url;
 
@@ -336,7 +336,7 @@ class WolopayApi
     /**
      * @return string
      */
-    private function generateHeaderWSSE()
+    protected function generateHeaderWSSE()
     {
         $nonce = md5(rand().uniqid(), true);
         $created = gmdate(DATE_ISO8601, time());
@@ -365,6 +365,16 @@ class WolopayApi
             $protocol = isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0';
             header($protocol.' '.$httpStatusCode.' '.$httpStatusMsg);
         }
+    }
+
+    /**
+     * @param $string
+     * @param $numberOfItems
+     * @return string
+     */
+    public static function replaceNumbersOfItems($string, $numberOfItems)
+    {
+        return preg_replace('/\{\[\{[ ]*number[ ]*\}\]\}/', $numberOfItems, $string);
     }
 
 }
