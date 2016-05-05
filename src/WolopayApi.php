@@ -267,6 +267,18 @@ class WolopayApi
     }
 
     /**
+     * Get pay methods available by country and by direct payment
+     *
+     * @param $countryISO String ISO 3166 2 digits
+     * @param array $extraOptions
+     * @return \stdclass
+     */
+    public function getDirectPaymentPayMethodsAvailable($countryISO, $extraOptions = array())
+    {
+        return $this->makeRequest('/direct_payment/paymethods/country/'.$countryISO.'.json', 'GET', $extraOptions);
+    }
+
+    /**
      * Make a purchase with your virtual currency (only available in some apps)
      *
      * @param $gamerId
@@ -320,17 +332,50 @@ class WolopayApi
         $result = curl_getinfo($ch);
         curl_close ($ch);
 
-        if ($result['http_code'] < 200 || $result['http_code'] >= 300) {
+        $httpCode = $result['http_code'];
 
-            if ($this->debug){
+        if ($httpCode < 200 || $httpCode >= 300) {
 
-                echo "HTTP_CODE: ".$result['http_code']."\n<br>".$resultJson."<br>\n<br>\n";
+            if ($this->debug) {
+
+                $this->printPrettyErrorMessage($result, $resultJson);
             }
 
             return false;
         }
 
         return json_decode($resultJson);
+    }
+
+    protected function printPrettyErrorMessage($curlInfo, $resultJson)
+    {
+        $httpCode = $curlInfo['http_code'];
+
+        $template = <<<'HTML'
+                <div style='background: #FFB6B6; padding:20px; border: 1px solid #000; text-shadow: 1px 1px 2px #fff'>
+                    HTTP_CODE: <b>%1$d</b><br><br>
+                    <pre>%2$s</pre>
+                    <em style="font-size: 0.6em; text-align: right; display: block;">WolopayApi.php</em>
+                </div>
+HTML;
+
+        $msg = $httpCodeDesc = '';
+
+        if ($httpCode === 401) {
+            $msg .= "Acces Deniend (verify your credentials)\n<br>";
+        }
+
+        $json = @json_decode($resultJson, true);
+
+        if ($json) {
+            $msg .= print_r($json, true);
+        } else {
+            $msg .= $resultJson;
+        }
+
+        $msg .= "<br>\n";
+
+        echo sprintf($template, $httpCode, $msg);
     }
 
     /**
