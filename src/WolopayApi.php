@@ -110,6 +110,40 @@ class WolopayApi
 
         return $result;
     }
+    
+     /**
+     * @param $gamerId
+     * @param $gamerLevel
+     * @param $countryISO String ISO 3166 2 digits
+     * @param $payMethodId integer See the docs to set your favourite payment method
+     * @param string $articles Comma separated list of articles (ids)
+     * @param string $gamerEmail Email of the gamer
+     * @param array $extraPostValues
+     * @param bool $autoRedirect
+     * @return bool
+     */
+    public function directPaymentArticles($gamerId, $gamerLevel, $countryId, $payMethodId, $articlesIdsCSV,
+                                          $gamer_email ='', array $extraPostValues = array(), $autoRedirect = false)
+    {
+        $params = array(
+            'gamer_id'      => $gamerId,
+            'gamer_level'    => $gamerLevel,
+            'country'    => $countryId,
+            'pay_method_id'    => $payMethodId,
+            'articles'    => $articlesIdsCSV,
+            'gamer_email'    => $gamer_email
+        );
+
+        $postValues = array_merge($extraPostValues, $params);
+        $result = $this->makeRequest('/transaction_articles.json', 'POST', $postValues);
+
+        if ($autoRedirect && $result && $result->url){
+            header("Location: ".$result->url);
+            exit;
+        }
+
+        return $result;
+    }
 
     /**
      * @param $gamerId
