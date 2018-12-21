@@ -3,7 +3,7 @@
 /**
  * This file is part of the wolopay.com (c)
  *
- * Create a promotional code
+ * Use a promotional code
  */
 
 require_once __DIR__."/../lib/WolopayApi.php";
